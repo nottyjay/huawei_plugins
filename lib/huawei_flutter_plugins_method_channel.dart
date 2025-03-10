@@ -19,6 +19,13 @@ class MethodChannelHuaweiFlutterPlugins extends HuaweiFlutterPluginsPlatform {
     return version;
   }
 
+  Future<void> initConfig(String ak, String sk) async {
+    await methodChannel.invokeMethod('initConfig', {
+      'ak': ak,
+      'sk': sk,
+    });
+  }
+
   Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) async {
     await methodChannel.invokeMethod('recognizeShortAudio', {
       'audioFile': audioFile.path,
