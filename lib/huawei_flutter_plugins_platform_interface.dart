@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'huawei_flutter_plugins_config.dart';
 import 'huawei_flutter_plugins_method_channel.dart';
 
 abstract class HuaweiFlutterPluginsPlatform extends PlatformInterface {
@@ -25,5 +28,13 @@ abstract class HuaweiFlutterPluginsPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<void> initConfig(String ak, String sk) {
+    throw UnimplementedError('initConfig() has not been implemented.');
+  }
+
+  Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) {
+    throw UnimplementedError('recognizeShortAudio() has not been implemented.');
   }
 }

@@ -1,3 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.alphay.huawei.huawei_flutter_plugins">
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>

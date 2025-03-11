@@ -4,6 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.sis.v1.SisClient;
@@ -51,38 +52,44 @@ public class HuaweiFlutterPluginsPlugin implements FlutterPlugin, MethodCallHand
     if (call.method.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else if(call.method.equals("initConfig")) {
-      String configJson = call.argument("config");
-      try {
-        JSONObject jsonObject = new JSONObject(configJson);
-        String ak = jsonObject.getString("ak");
-        String sk = jsonObject.getString("sk");
-        BasicCredentials basicCredentials = new BasicCredentials().withAk(ak).withSk(sk);
-        this.client = SisClient.newBuilder().withHttpConfig(HttpConfig.getDefaultHttpConfig())
-                .withCredential(basicCredentials)
-                .withRegion(SisRegion.valueOf("cn-north-4"))
-                .build();
-      } catch (JSONException e) {
-        throw new RuntimeException(e);
-      }
+        String ak = call.argument("ak");
+        String sk = call.argument("sk");
+        new Thread(() -> {
+          BasicCredentials basicCredentials = new BasicCredentials().withAk(ak).withSk(sk);
+          this.client = SisClient.newBuilder().withHttpConfig(HttpConfig.getDefaultHttpConfig())
+                  .withCredential(basicCredentials)
+                  .withRegion(SisRegion.valueOf("cn-north-4"))
+                  .build();
+          result.success(null);
+        }).start();
+        
     } else if(call.method.equals("recognizeShortAudio")) {
       String path = call.argument("audioFile");
       String configJson = call.argument("config");
+      new Thread(() -> {
         try {
-            JSONObject jsonObject = new JSONObject(configJson);
+          JSONObject jsonObject = new JSONObject(configJson);
           Config configBody = new Config();
           configBody.setAudioFormat(Config.AudioFormatEnum.fromValue(jsonObject.getString("audioFormat")));
           configBody.setProperty(Config.PropertyEnum.fromValue(jsonObject.getString("property")));
-          configBody.setAddPunc(Config.AddPuncEnum.fromValue(jsonObject.getString("addPunc")));
-          configBody.setDigitNorm(Config.DigitNormEnum.fromValue(jsonObject.getString("digitNorm")));
-          configBody.setVocabularyId(jsonObject.getString("vocabularyId"));
-          configBody.setNeedWordInfo(Config.NeedWordInfoEnum.fromValue(jsonObject.getString("needWordInfo")));
+          if(!"null".equals(jsonObject.getString("addPunc"))) {
+            configBody.setAddPunc(Config.AddPuncEnum.fromValue(jsonObject.getString("addPunc")));
+          }
+          if(!"null".equals(jsonObject.getString("digitNorm"))) {
+            configBody.setDigitNorm(Config.DigitNormEnum.fromValue(jsonObject.getString("digitNorm")));
+          }
+          if(!"null".equals(jsonObject.getString("vocabularyId"))) {
+            configBody.setVocabularyId(jsonObject.getString("vocabularyId"));
+          }
+          if(!"null".equals(jsonObject.getString("needWordInfo"))) {
+            configBody.setNeedWordInfo(Config.NeedWordInfoEnum.fromValue(jsonObject.getString("needWordInfo")));
+          }
           RecognizeShortAudioRequest request = new RecognizeShortAudioRequest();
           PostShortAudioReq body = new PostShortAudioReq();
 
           // 加载文件并转换为 Base64 字符串
           File file = new File(path);
-          byte[] fileContent = null;
-          fileContent = Files.readAllBytes(file.toPath());
+          byte[] fileContent = Files.readAllBytes(file.toPath());
           String base64Audio = Base64.getEncoder().encodeToString(fileContent);
           body.withData(base64Audio);
           body.withConfig(configBody);
@@ -90,9 +97,11 @@ public class HuaweiFlutterPluginsPlugin implements FlutterPlugin, MethodCallHand
 
           RecognizeShortAudioResponse response = client.recognizeShortAudio(request);
           log.debug(response.toString());
+          result.success(new Gson().toJson(response));
         } catch (JSONException | IOException e) {
-            throw new RuntimeException(e);
+          result.error("ERROR", e.getMessage(), null);
         }
+      }).start();
     } else {
       result.notImplemented();
     }
