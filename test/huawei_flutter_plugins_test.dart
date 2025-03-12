@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:huawei_flutter_plugins/huawei_flutter_plugins.dart';
+import 'package:huawei_flutter_plugins/huawei_flutter_plugins_config.dart';
 import 'package:huawei_flutter_plugins/huawei_flutter_plugins_platform_interface.dart';
 import 'package:huawei_flutter_plugins/huawei_flutter_plugins_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -10,6 +13,18 @@ class MockHuaweiFlutterPluginsPlatform
 
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future<void> initConfig(String ak, String sk) {
+    // TODO: implement initConfig
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) {
+    // TODO: implement recognizeShortAudio
+    throw UnimplementedError();
+  }
 }
 
 void main() {

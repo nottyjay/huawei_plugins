@@ -10,7 +10,7 @@ enum AudioFormatEnum {
   wav,
   amr,
   amrwb,
-  auto
+  auto,
   // 可以根据实际情况添加更多音频格式
 }
 
@@ -23,7 +23,7 @@ enum PropertyEnum {
   chinese_8k_common,
   chinese_16k_common,
   english_16k_common,
-  english_8k_common
+  english_8k_common,
 }
 
 /**
@@ -44,9 +44,8 @@ class SisModelConfig {
     this.digitNorm,
     this.vocabularyId,
     this.needWordInfo,
-  }): audioFormat = audioFormatEnum.name,
-      property = propertyEnum.name;
-
+  }) : audioFormat = audioFormatEnum.name,
+       property = propertyEnum.name;
 
   Map<String, dynamic> toJson() {
     return {
@@ -58,5 +57,63 @@ class SisModelConfig {
       'needWordInfo': needWordInfo,
     };
   }
+}
 
+class Result {
+  final double score;
+  final String text;
+  Result({required this.score, required this.text});
+  factory Result.fromJson(Map<String, dynamic> json) {
+    return Result(
+      score: (json['score'] as num).toDouble(),
+      text: json['text'] as String,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {'score': score, 'text': text};
+  }
+}
+
+class RecognizeShortAudioResponse {
+  final int httpStatusCode; // 200 成功时的字段
+  final Result? result;
+  final String? traceId; // 400 失败时的字段
+  final String? errorCode;
+  final String? errorMsg;
+  RecognizeShortAudioResponse._({
+    required this.httpStatusCode,
+    this.result,
+    this.traceId,
+    this.errorCode,
+    this.errorMsg,
+  });
+  factory RecognizeShortAudioResponse.fromJson(Map<String, dynamic> json) {
+    final statusCode = json['httpStatusCode'] as int;
+    if (statusCode == 200) {
+      return RecognizeShortAudioResponse._(
+        httpStatusCode: statusCode,
+        result: Result.fromJson(json['result'] as Map<String, dynamic>),
+        traceId: json['traceId'] as String,
+      );
+    } else if (statusCode == 400) {
+      return RecognizeShortAudioResponse._(
+        httpStatusCode: statusCode,
+        errorCode: json['error_code'] as String,
+        errorMsg: json['error_msg'] as String,
+      );
+    } else {
+      throw FormatException('Unsupported status code: $statusCode');
+    }
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{'httpStatusCode': httpStatusCode};
+    if (httpStatusCode == 200) {
+      map['result'] = result!.toJson();
+      map['traceId'] = traceId;
+    } else if (httpStatusCode == 400) {
+      map['error_code'] = errorCode;
+      map['error_msg'] = errorMsg;
+    }
+    return map;
+  }
 }

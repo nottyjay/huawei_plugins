@@ -26,12 +26,12 @@ class MethodChannelHuaweiFlutterPlugins extends HuaweiFlutterPluginsPlatform {
     });
   }
 
-  Future<String?> recognizeShortAudio(File audioFile, SisModelConfig config) async {
+  Future<RecognizeShortAudioResponse?> recognizeShortAudio(File audioFile, SisModelConfig config) async {
     final result = await methodChannel.invokeMethod<String>('recognizeShortAudio', {
       'audioFile': audioFile.path,
       'config': jsonEncode(config.toJson()),
     });
     // {\"result\":{\"score\":0.6445258,\"text\":\"1234姑\"},\"traceId\":\"047b44f1-4a80-4be7-bab0-af1ec5570b33\",\"httpStatusCode\":200}
-    return result;
+    return RecognizeShortAudioResponse.fromJson(jsonDecode(result!));
   }
 }
