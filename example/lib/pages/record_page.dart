@@ -18,10 +18,13 @@ class _RecordPageState extends State<RecordPage> {
   final _huawei_flutter_plugins = HuaweiFlutterPlugins();
   bool _isRecording = false;
   String? _recordPath;
-  String ak = "CHG4XMMOMPGZXAFVWYTS", sk="oratGOI3iRgZn4ECW7akPEaIW4S9c04k1P3IhQku";
+  String ak = "";
+  String sk="";
+  String projectId="";
+  String region="";
 
   _RecordPageState() {
-    _huawei_flutter_plugins.initConfig(ak, sk);
+    _huawei_flutter_plugins.initConfig(ak, sk,  projectId, region);
   }
 
   Future<void> _startRecording() async {
@@ -56,7 +59,10 @@ class _RecordPageState extends State<RecordPage> {
       });
       if (path != null) {
         print('录音文件保存在: $path');
-        _huawei_flutter_plugins.recognizeShortAudio(File(path), new SisModelConfig(audioFormatEnum: AudioFormatEnum.aac, propertyEnum: PropertyEnum.chinese_16k_general));
+        RecognizeShortAudioResponse? response = await _huawei_flutter_plugins.recognizeShortAudio(File(path), new SisModelConfig(audioFormatEnum: AudioFormatEnum.aac, propertyEnum: PropertyEnum.chinese_16k_general));
+        if (response?.httpStatusCode == 200) {
+          print('识别结果: ${response?.result!.text}');
+        }
       }
     }catch(e) {
       debugPrint('停止录音失败: $e');

@@ -1,8 +1,7 @@
 name: huawei_flutter_plugins
-description: "Something about huawei platform"
+description: "华为云 Flutter 插件"
 version: 0.0.1
-homepage:
-
+homepage: https://github.com/nottyjay/huawei_plugins
 environment:
   sdk: ^3.7.0
   flutter: '>=3.3.0'

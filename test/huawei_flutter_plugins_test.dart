@@ -15,13 +15,13 @@ class MockHuaweiFlutterPluginsPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<void> initConfig(String ak, String sk) {
+  Future<void> initConfig(String ak, String sk, String projectId, String region) {
     // TODO: implement initConfig
     throw UnimplementedError();
   }
 
   @override
-  Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) {
+  Future<RecognizeShortAudioResponse?> recognizeShortAudio(File audioFile, SisModelConfig config) {
     // TODO: implement recognizeShortAudio
     throw UnimplementedError();
   }

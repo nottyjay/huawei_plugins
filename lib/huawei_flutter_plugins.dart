@@ -10,11 +10,11 @@ class HuaweiFlutterPlugins {
     return HuaweiFlutterPluginsPlatform.instance.getPlatformVersion();
   }
 
-  Future<void> initConfig(String ak, String sk) {
-    return HuaweiFlutterPluginsPlatform.instance.initConfig(ak, sk);
+  Future<void> initConfig(String ak, String sk, String projectId, String region) {
+    return HuaweiFlutterPluginsPlatform.instance.initConfig(ak, sk, projectId, region);
   }
 
-  Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) {
+  Future<RecognizeShortAudioResponse?> recognizeShortAudio(File audioFile, SisModelConfig config) {
     return HuaweiFlutterPluginsPlatform.instance.recognizeShortAudio(audioFile, config);
   }
 }

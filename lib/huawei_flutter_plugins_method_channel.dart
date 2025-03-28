@@ -19,10 +19,12 @@ class MethodChannelHuaweiFlutterPlugins extends HuaweiFlutterPluginsPlatform {
     return version;
   }
 
-  Future<void> initConfig(String ak, String sk) async {
+  Future<void> initConfig(String ak, String sk, String projectId, String region) async {
     await methodChannel.invokeMethod('initConfig', {
       'ak': ak,
       'sk': sk,
+      'projectId': projectId,
+      'region': region
     });
   }
 

@@ -30,11 +30,11 @@ abstract class HuaweiFlutterPluginsPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<void> initConfig(String ak, String sk) {
+  Future<void> initConfig(String ak, String sk, String projectId, String region) {
     throw UnimplementedError('initConfig() has not been implemented.');
   }
 
-  Future<void> recognizeShortAudio(File audioFile, SisModelConfig config) {
+  Future<RecognizeShortAudioResponse?> recognizeShortAudio(File audioFile, SisModelConfig config) {
     throw UnimplementedError('recognizeShortAudio() has not been implemented.');
   }
 }

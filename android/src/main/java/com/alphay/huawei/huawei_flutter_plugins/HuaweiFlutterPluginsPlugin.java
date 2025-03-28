@@ -1,12 +1,12 @@
 package com.alphay.huawei.huawei_flutter_plugins;
 
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
+import com.huaweicloud.sdk.core.utils.StringUtils;
 import com.huaweicloud.sdk.sis.v1.SisClient;
 import com.huaweicloud.sdk.sis.v1.model.Config;
 import com.huaweicloud.sdk.sis.v1.model.PostShortAudioReq;
@@ -54,12 +54,18 @@ public class HuaweiFlutterPluginsPlugin implements FlutterPlugin, MethodCallHand
     } else if(call.method.equals("initConfig")) {
         String ak = call.argument("ak");
         String sk = call.argument("sk");
-        new Thread(() -> {
+        String projectId = call.argument("projectId");
+        String region = call.argument("region");
+
+      new Thread(() -> {
           BasicCredentials basicCredentials = new BasicCredentials().withAk(ak).withSk(sk);
+          if (!StringUtils.isEmpty(projectId)){
+            basicCredentials.setProjectId(projectId);
+          }
           this.client = SisClient.newBuilder().withHttpConfig(HttpConfig.getDefaultHttpConfig())
                   .withCredential(basicCredentials)
-                  .withRegion(SisRegion.valueOf("cn-north-4"))
-                  .build();
+                  .withRegion(SisRegion.valueOf(region)).build();
+
           result.success(null);
         }).start();
         

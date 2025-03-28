@@ -1,0 +1,118 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name SIS
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import AVFoundation
+import CryptoKit
+import Foundation
+@_exported import SIS
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os
+public struct SASRErrorResponse : Swift.Decodable {
+  public var errorCode: Swift.String
+  public var errorMsg: Swift.String
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SASRResponse : Swift.Decodable {
+  public var traceId: Swift.String
+  public var result: SIS.SASRResult
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SASRResult : Swift.Decodable {
+  public var text: Swift.String
+  public var score: Swift.Float
+  public var wordInfo: Swift.Array<SIS.WordInfo>?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct WordInfo : Swift.Decodable {
+  public var startTime: Swift.Int
+  public var endTime: Swift.Int
+  public var word: Swift.String
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SASRRequest : Swift.Encodable {
+  public var config: SIS.SASRConfig
+  public var data: Swift.String
+  public init(config: SIS.SASRConfig, data: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct SASRConfig : Swift.Encodable {
+  public var audioFormat: Swift.String
+  public var property: Swift.String
+  public var addPunc: Swift.String
+  public var digitNorm: Swift.String
+  public var vocabularyId: Swift.String
+  public init()
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct RASRConfig : Swift.Encodable {
+  public var audioFormat: Swift.String
+  public var property: Swift.String
+  public var addPunc: Swift.String
+  public var digitNorm: Swift.String
+  public var vocabularyId: Swift.String
+  public var interimResults: Swift.String
+  public init()
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct RASRResponse : Swift.Decodable {
+  public let respType: Swift.String
+  public let traceId: Swift.String
+  public let segments: Swift.Array<SIS.RASRSentence>?
+  public let errorCode: Swift.String?
+  public let errorMsg: Swift.String?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RASRSentence : Swift.Decodable {
+  public let startTime: Swift.Int
+  public let endTime: Swift.Int
+  public let isFinal: Swift.Bool
+  public let result: SIS.RASRResult
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RASRResult : Swift.Decodable {
+  public let text: Swift.String
+  public let score: Swift.Float
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol WebSocketConnection {
+  func connect()
+  func disconnect()
+  func send(text: Swift.String)
+  func send(data: Foundation.Data)
+  var delegate: (any SIS.WebSocketConnectionDelegate)? { get set }
+}
+public protocol WebSocketConnectionDelegate {
+  func onConnected(connection: any SIS.WebSocketConnection)
+  func onDisconnected(connection: any SIS.WebSocketConnection)
+  func onError(connection: any SIS.WebSocketConnection, error: any Swift.Error)
+  func onMessage(connection: any SIS.WebSocketConnection, response: SIS.RASRResponse)
+}
+@objc @available(iOS 13.0, *)
+public class RASRClient : ObjectiveC.NSObject, SIS.WebSocketConnection, Foundation.URLSessionWebSocketDelegate {
+  public var delegate: (any SIS.WebSocketConnectionDelegate)?
+  public init(auth: SIS.AuthInfo, config: SIS.RASRConfig)
+  public func start()
+  public func stop()
+  public func connect()
+  public func disconnect()
+  public func send(text: Swift.String)
+  public func send(data: Foundation.Data)
+  @objc deinit
+}
+public protocol HTTPDelegate {
+  func onMessage(response: SIS.SASRResponse)
+  func onError(response: SIS.SASRErrorResponse)
+}
+@objc public class SASRClient : ObjectiveC.NSObject, Foundation.URLSessionDelegate {
+  public var delegate: (any SIS.HTTPDelegate)?
+  public init(auth: SIS.AuthInfo)
+  public func transcribe(request: SIS.SASRRequest)
+  @objc deinit
+}
+public struct AuthInfo {
+  public init(ak: Swift.String, sk: Swift.String, region: Swift.String, projectId: Swift.String)
+}

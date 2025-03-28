@@ -1,0 +1,11 @@
+framework module SIS {
+  umbrella header "SIS.h"
+  export *
+
+  module * { export * }
+}
+
+module SIS.Swift {
+  header "SIS-Swift.h"
+  requires objc
+}
